@@ -27,6 +27,10 @@ while run:
     screen.blit(ground,(groundScroll,768))
     groundScroll-=scrollSpeed
 
+    if abs(groundScroll) > 35: #total pixel is 35 for the lined section
+        groundScroll=0
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
