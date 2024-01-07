@@ -19,11 +19,47 @@ scrollSpeed=4
 #load images
 bg=pygame.image.load('Flappy-Bird---Pygame/img/bg.png')
 ground=pygame.image.load('Flappy-Bird---Pygame/img/ground.png')
+
+class Bird(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        pygame.sprite.Sprite.__init__(self)
+        self.images=[]
+        self.index = 0
+        self.counter = 0
+        for num in range(1,4):
+            img=pygame.image.load(f'Flappy-Bird---Pygame/img/bird{num}.png')
+            self.images.append(img)
+        
+        self.image =self.images[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.center= [x,y]
+    
+    def update(self):
+
+        #animation
+        self.counter +=1
+        flapCooldown = 5
+
+        if self.counter > flapCooldown:
+            self.counter = 0
+            self.index += 1
+
+            if self.index >= len(self.images):
+                self.index=0
+        self.image=self.images[self.index]
+birdGroup =pygame.sprite.Group()
+
+flappy= Bird(100,int(SCREEN_HEIGHT/2))
+
+birdGroup.add(flappy)
 run = True
 while run:
 
     clock.tick(fps)
     screen.blit(bg,(0,0))
+    birdGroup.draw(screen)
+    birdGroup.update()
+
     screen.blit(ground,(groundScroll,768))
     groundScroll-=scrollSpeed
 
