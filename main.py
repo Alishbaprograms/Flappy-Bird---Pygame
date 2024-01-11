@@ -33,8 +33,13 @@ class Bird(pygame.sprite.Sprite):
         self.image =self.images[self.index]
         self.rect = self.image.get_rect()
         self.rect.center= [x,y]
+        self.vel =0
     
     def update(self):
+        self.vel +=0.5
+        print(self.vel)
+        if self.rect.bottom < 768:
+            self.rect.y += int(self.vel)
 
         #animation
         self.counter +=1
