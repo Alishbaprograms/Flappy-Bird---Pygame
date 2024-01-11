@@ -36,10 +36,18 @@ class Bird(pygame.sprite.Sprite):
         self.vel =0
     
     def update(self):
+        #gravity
         self.vel +=0.5
+        if self.vel > 8:
+            self.vel=8
         print(self.vel)
         if self.rect.bottom < 768:
             self.rect.y += int(self.vel)
+
+        #jump
+        if pygame.mouse.get_pressed()[0] == 1: 
+            self.vel = -10
+
 
         #animation
         self.counter +=1
