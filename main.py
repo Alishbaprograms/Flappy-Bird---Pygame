@@ -34,6 +34,7 @@ class Bird(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center= [x,y]
         self.vel =0
+        self.clicked = False
     
     def update(self):
         #gravity
@@ -45,8 +46,12 @@ class Bird(pygame.sprite.Sprite):
             self.rect.y += int(self.vel)
 
         #jump
-        if pygame.mouse.get_pressed()[0] == 1: 
+        if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False: 
+            self.clicked= True
             self.vel = -10
+
+        if pygame.mouse.get_pressed()[0] == 0 : 
+            self.clicked =False
 
 
         #animation
@@ -60,6 +65,10 @@ class Bird(pygame.sprite.Sprite):
             if self.index >= len(self.images):
                 self.index=0
         self.image=self.images[self.index]
+
+        #rotation
+
+        self.image = pygame.transform.rotate(self.images[self.index],self.vel)
 birdGroup =pygame.sprite.Group()
 
 flappy= Bird(100,int(SCREEN_HEIGHT/2))
