@@ -15,6 +15,8 @@ pygame.display.set_caption('Alishba- Flappy Bird')
 
 groundScroll=0
 scrollSpeed=4
+flying= False
+gameOver = False
 
 #load images
 bg=pygame.image.load('Flappy-Bird---Pygame/img/bg.png')
@@ -37,38 +39,43 @@ class Bird(pygame.sprite.Sprite):
         self.clicked = False
     
     def update(self):
-        #gravity
-        self.vel +=0.5
-        if self.vel > 8:
-            self.vel=8
-        print(self.vel)
-        if self.rect.bottom < 768:
-            self.rect.y += int(self.vel)
-
+        if flying == True:
+            #gravity
+            self.vel +=0.5
+            if self.vel > 8:
+                self.vel=8
+            print(self.vel)
+            if self.rect.bottom < 768:
+                self.rect.y += int(self.vel)
+        if gameOver == False:
         #jump
-        if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False: 
-            self.clicked= True
-            self.vel = -10
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False: 
+                self.clicked= True
+                self.vel = -10
 
-        if pygame.mouse.get_pressed()[0] == 0 : 
-            self.clicked =False
+            if pygame.mouse.get_pressed()[0] == 0 : 
+                self.clicked =False
 
 
-        #animation
-        self.counter +=1
-        flapCooldown = 5
+            #animation
+            self.counter +=1
+            flapCooldown = 5
 
-        if self.counter > flapCooldown:
-            self.counter = 0
-            self.index += 1
+            if self.counter > flapCooldown:
+                self.counter = 0
+                self.index += 1
 
-            if self.index >= len(self.images):
-                self.index=0
-        self.image=self.images[self.index]
+                if self.index >= len(self.images):
+                    self.index=0
+            self.image=self.images[self.index]
 
-        #rotation
+            #rotation
 
-        self.image = pygame.transform.rotate(self.images[self.index],self.vel)
+            self.image = pygame.transform.rotate(self.images[self.index],self.vel* -2)
+
+        else:
+            self.image = pygame.transform.rotate(self.images[self.index],-90)
+
 birdGroup =pygame.sprite.Group()
 
 flappy= Bird(100,int(SCREEN_HEIGHT/2))
@@ -83,15 +90,25 @@ while run:
     birdGroup.update()
 
     screen.blit(ground,(groundScroll,768))
-    groundScroll-=scrollSpeed
 
-    if abs(groundScroll) > 35: #total pixel is 35 for the lined section
-        groundScroll=0
+    #gameOver Logic
+
+    if flappy.rect.bottom > 768: #it has hit ground
+        gameOver = True
+        flying = False
+    #draw Logic
+    if gameOver == False:
+        groundScroll -= scrollSpeed
+        if abs(groundScroll) > 35: #total pixel is 35 for the lined section
+            groundScroll=0
 
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and gameOver == False:
+            flying =True
     pygame.display.update() #refresh
   
 pygame.quit()   
