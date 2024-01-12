@@ -16,6 +16,10 @@ SCREEN_HEIGHT = 936
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('Alishba- Flappy Bird')
 
+font= pygame.font.SysFont('Bauhaus 93' , 60)
+
+white = (255,255,255)
+
 #game variables
 
 groundScroll=0
@@ -32,6 +36,10 @@ passPipe = False
 #load images
 bg=pygame.image.load('Flappy-Bird---Pygame/img/bg.png')
 ground=pygame.image.load('Flappy-Bird---Pygame/img/ground.png')
+
+def drawText(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img , (x,y))
 
 class Bird(pygame.sprite.Sprite):
     def __init__(self,x,y):
@@ -139,13 +147,10 @@ while run:
             passPipe = True
         if passPipe == True:
           if birdGroup.sprites()[0].rect.left >  pipeGroup.sprites()[0].rect.right:
-              score +=1
+              score += 1
               passPipe =False
 
-    print(score)
-
-
-
+    drawText(str(score), font,white, int(SCREEN_WIDTH/2), 140)
 
     #gameOver Logic
     if pygame.sprite.groupcollide(birdGroup, pipeGroup, False, False) or flappy.rect.top < 0:
