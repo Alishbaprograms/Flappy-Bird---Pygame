@@ -25,6 +25,9 @@ gameOver = False
 pipeGap=150
 pipeFreq = 1500 #msec
 lastPipe = pygame.time.get_ticks() - pipeFreq
+score = 0
+passPipe = False
+
 
 #load images
 bg=pygame.image.load('Flappy-Bird---Pygame/img/bg.png')
@@ -120,13 +123,29 @@ while run:
 
     clock.tick(fps)
     screen.blit(bg,(0,0))
-    
+
     birdGroup.draw(screen)
     birdGroup.update()
     
     pipeGroup.draw(screen)
     
     screen.blit(ground,(groundScroll,768))
+
+    #check score
+    if len(pipeGroup) > 0:
+        if birdGroup.sprites()[0].rect.left >  pipeGroup.sprites()[0].rect.left\
+            and birdGroup.sprites()[0].rect.right < pipeGroup.sprites()[0].rect.right\
+            and passPipe == False :
+            passPipe = True
+        if passPipe == True:
+          if birdGroup.sprites()[0].rect.left >  pipeGroup.sprites()[0].rect.right:
+              score +=1
+              passPipe =False
+
+    print(score)
+
+
+
 
     #gameOver Logic
     if pygame.sprite.groupcollide(birdGroup, pipeGroup, False, False) or flappy.rect.top < 0:
