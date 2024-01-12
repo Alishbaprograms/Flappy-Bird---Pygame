@@ -1,5 +1,10 @@
 import pygame
 from pygame.locals import *
+import random 
+
+
+
+
 pygame.init()
 
 clock=pygame.time.Clock()
@@ -97,6 +102,9 @@ class Pipe(pygame.sprite.Sprite):
     def update(self):
         self.rect.x -=scrollSpeed
 
+        if self.rect.right < 0:
+            self.kill()
+
 
 
 
@@ -112,26 +120,31 @@ while run:
 
     clock.tick(fps)
     screen.blit(bg,(0,0))
+    
     birdGroup.draw(screen)
     birdGroup.update()
     
     pipeGroup.draw(screen)
-    pipeGroup.update()
-
+    
     screen.blit(ground,(groundScroll,768))
 
     #gameOver Logic
+    if pygame.sprite.groupcollide(birdGroup, pipeGroup, False, False) or flappy.rect.top < 0:
+        gameOver = True
+        
 
-    if flappy.rect.bottom > 768: #it has hit ground
+
+    if flappy.rect.bottom >= 768: #it has hit ground
         gameOver = True
         flying = False
     #draw Logic
-    if gameOver == False:
+    if gameOver == False and flying == True:
 
         timeNow=pygame.time.get_ticks()
         if timeNow -lastPipe > pipeFreq:
-            btmPipe = Pipe(SCREEN_WIDTH,int(SCREEN_HEIGHT/2),-1)
-            topPipe = Pipe(SCREEN_WIDTH,int(SCREEN_HEIGHT/2),1)
+            pipeHeight=random.randint(-100,100)
+            btmPipe = Pipe(SCREEN_WIDTH,int(SCREEN_HEIGHT/2) +pipeHeight,-1)
+            topPipe = Pipe(SCREEN_WIDTH,int(SCREEN_HEIGHT/2)+ pipeHeight,1)
             pipeGroup.add(btmPipe)
             pipeGroup.add(topPipe)
             lastPipe=timeNow
@@ -139,6 +152,9 @@ while run:
         groundScroll -= scrollSpeed
         if abs(groundScroll) > 35: #total pixel is 35 for the lined section
             groundScroll=0
+
+        
+        pipeGroup.update()
 
 
     for event in pygame.event.get():
