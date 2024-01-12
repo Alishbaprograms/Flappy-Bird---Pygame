@@ -17,6 +17,9 @@ groundScroll=0
 scrollSpeed=4
 flying= False
 gameOver = False
+pipeGap=150
+pipeFreq = 1500 #msec
+lastPipe = pygame.time.get_ticks() - pipeFreq
 
 #load images
 bg=pygame.image.load('Flappy-Bird---Pygame/img/bg.png')
@@ -78,11 +81,22 @@ class Bird(pygame.sprite.Sprite):
 
 
 class Pipe(pygame.sprite.Sprite):
-    def __init__ (self,x,y):
+    def __init__ (self,x,y,position):
         pygame.sprite.Sprite.__init__(self)
         self.image =pygame.image.load('Flappy-Bird---Pygame/img/pipe.png')
         self.rect = self.image.get_rect()
-        self.rect.topleft= [x,y]
+        #bottom pipe= -1 and the other is +1
+
+        if position == 1:
+            self.image= pygame.transform.flip(self.image,False, True)
+            self.rect.bottomleft=[x,y - int(pipeGap/2)]
+        else:
+            self.rect.topleft= [x,y+ int(pipeGap/2)]
+
+
+    def update(self):
+        self.rect.x -=scrollSpeed
+
 
 
 
@@ -92,10 +106,6 @@ pipeGroup = pygame.sprite.Group()
 flappy= Bird(100,int(SCREEN_HEIGHT/2))
 
 birdGroup.add(flappy)
-
-
-btmPipe = Pipe(300,int(SCREEN_HEIGHT/2))
-pipeGroup.add(btmPipe)
 
 run = True
 while run:
@@ -117,6 +127,15 @@ while run:
         flying = False
     #draw Logic
     if gameOver == False:
+
+        timeNow=pygame.time.get_ticks()
+        if timeNow -lastPipe > pipeFreq:
+            btmPipe = Pipe(SCREEN_WIDTH,int(SCREEN_HEIGHT/2),-1)
+            topPipe = Pipe(SCREEN_WIDTH,int(SCREEN_HEIGHT/2),1)
+            pipeGroup.add(btmPipe)
+            pipeGroup.add(topPipe)
+            lastPipe=timeNow
+
         groundScroll -= scrollSpeed
         if abs(groundScroll) > 35: #total pixel is 35 for the lined section
             groundScroll=0
