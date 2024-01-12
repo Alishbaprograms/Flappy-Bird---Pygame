@@ -36,6 +36,7 @@ passPipe = False
 #load images
 bg=pygame.image.load('Flappy-Bird---Pygame/img/bg.png')
 ground=pygame.image.load('Flappy-Bird---Pygame/img/ground.png')
+buttonImg = pygame.image.load('Flappy-Bird---Pygame/img/restart.png')
 
 def drawText(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -117,7 +118,23 @@ class Pipe(pygame.sprite.Sprite):
             self.kill()
 
 
+class Button:
+    def __init__(self,x,y,image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft= (x,y)
 
+    def draw(self):
+        action = False
+        #get mouse pos
+        pos = pygame.mouse.get_pos()
+        #check if mouse is over
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                action = True
+
+        screen.blit(self.image,(self.rect.x , self.rect.y))
+        return action
 
 birdGroup =pygame.sprite.Group()
 pipeGroup = pygame.sprite.Group()
@@ -125,6 +142,8 @@ pipeGroup = pygame.sprite.Group()
 flappy= Bird(100,int(SCREEN_HEIGHT/2))
 
 birdGroup.add(flappy)
+
+button = Button(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT//2 -100, buttonImg)
 
 run = True
 while run:
@@ -180,7 +199,9 @@ while run:
         
         pipeGroup.update()
 
-
+    if gameOver == True:
+         if button.draw() == True:
+             print("Clicked")
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
